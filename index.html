@@ -1,1 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>🐶 薫子ログ</title>
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f7f7f7;
+  margin: 0;
+  padding: 24px;
+  color: #222;
+}
+
+main {
+  max-width: 500px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.label {
+  text-align: center;
+  font-size: 20px;
+}
+
+.count {
+  text-align: center;
+  font-size: 40px;
+  font-weight: bold;
+  margin: 12px 0 20px;
+}
+
+button {
+  width: 100%;
+  padding: 18px;
+  border: none;
+  border-radius: 16px;
+  font-size: 20px;
+  background: #eeeeee;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+#message {
+  text-align: center;
+  min-height: 30px;
+  font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<main>
+
+<h1>🐶 薫子ログ</h1>
+
+<div class="card">
+
+  <div class="label">
+    💩 うんち
+  </div>
+
+  <div id="poopCount" class="count">
+    0回
+  </div>
+
+  <button id="poopButton">
+    💩 記録する
+  </button>
+
+</div>
+
+
+<div class="card">
+
+  <div class="label">
+    💧 おしっこ
+  </div>
+
+  <div id="peeCount" class="count">
+    0回
+  </div>
+
+  <button id="peeButton">
+    💧 記録する
+  </button>
+
+</div>
+
+<div id="message"></div>
+
+</main>
+
+
+<script>
+
+const today = new Date();
+
+const dateKey =
+  today.getFullYear() +
+  "-" +
+  String(today.getMonth() + 1).padStart(2, "0") +
+  "-" +
+  String(today.getDate()).padStart(2, "0");
+
+const storageKey = "kaoruko-log-" + dateKey;
+
+
+let data = JSON.parse(
+  localStorage.getItem(storageKey) ||
+  '{"poop":0,"pee":0}'
+);
+
+
+const poopCount =
+  document.getElementById("poopCount");
+
+const peeCount =
+  document.getElementById("peeCount");
+
+const message =
+  document.getElementById("message");
+
+
+function render() {
+
+  poopCount.textContent =
+    data.poop + "回";
+
+  peeCount.textContent =
+    data.pee + "回";
+
+}
+
+
+function record(type) {
+
+  data[type]++;
+
+  localStorage.setItem(
+    storageKey,
+    JSON.stringify(data)
+  );
+
+  render();
+
+  if (type === "poop") {
+
+    message.textContent =
+      "💩 記録したよ！";
+
+  } else {
+
+    message.textContent =
+      "💧 記録したよ！";
+
+  }
+
+  setTimeout(function() {
+
+    message.textContent = "";
+
+  }, 1200);
+
+}
+
+
+document
+  .getElementById("poopButton")
+  .addEventListener("click", function() {
+
+    record("poop");
+
+  });
+
+
+document
+  .getElementById("peeButton")
+  .addEventListener("click", function() {
+
+    record("pee");
+
+  });
+
+
+render();
+
+</script>
+
+</body>
+</html>
