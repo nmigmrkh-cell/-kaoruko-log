@@ -16,7 +16,7 @@ body {
 }
 
 main {
-  max-width: 500px;
+  max-width: 520px;
   margin: auto;
 }
 
@@ -28,7 +28,7 @@ h1 {
 .date {
   text-align: center;
   color: #777;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .card {
@@ -66,7 +66,7 @@ button {
   padding: 16px;
   border: none;
   border-radius: 16px;
-  font-size: 19px;
+  font-size: 18px;
   background: #eeeeee;
 }
 
@@ -79,11 +79,8 @@ button:active {
   color: #555;
 }
 
-.primary {
-  background: #e8e8e8;
-}
-
-input {
+input[type="number"],
+input[type="date"] {
   width: 100%;
   box-sizing: border-box;
   padding: 14px;
@@ -111,8 +108,46 @@ input {
   font-size: 16px;
   margin-bottom: 20px;
 }
+
+.history-title {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.history-date {
+  font-size: 19px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.history-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.history-row:last-child {
+  border-bottom: none;
+}
+
+.empty {
+  text-align: center;
+  color: #888;
+  padding: 10px;
+}
+
+.reset-button {
+  width: 100%;
+  margin-top: 10px;
+  background: #f1f1f1;
+  color: #555;
+}
 </style>
 </head>
+
 
 <body>
 
@@ -121,6 +156,9 @@ input {
 <h1>🐶 薫子ログ</h1>
 
 <div id="today" class="date"></div>
+
+
+<!-- 今日の記録 -->
 
 <div class="card">
 
@@ -132,7 +170,7 @@ input {
 
   <div class="button-row">
     <button class="minus" id="poopMinus">− 1</button>
-    <button class="primary" id="poopPlus">💩 ＋1</button>
+    <button id="poopPlus">💩 ＋1</button>
   </div>
 
   <br>
@@ -143,11 +181,13 @@ input {
 
   <div class="button-row">
     <button class="minus" id="peeMinus">− 1</button>
-    <button class="primary" id="peePlus">💧 ＋1</button>
+    <button id="peePlus">💧 ＋1</button>
   </div>
 
 </div>
 
+
+<!-- 散歩 -->
 
 <div class="card">
 
@@ -171,6 +211,8 @@ input {
 </div>
 
 
+<!-- 嘔吐 -->
+
 <div class="card">
 
   <h2>🤢 嘔吐</h2>
@@ -179,54 +221,72 @@ input {
 
   <div class="button-row">
     <button class="minus" id="vomitMinus">− 1</button>
-    <button class="primary" id="vomitPlus">🤢 ＋1</button>
+    <button id="vomitPlus">🤢 ＋1</button>
   </div>
 
 </div>
 
 
+<!-- ごはん -->
+
 <div class="card">
 
   <h2>🍚 ごはん</h2>
 
-  <div>
-    <strong>朝ごはん</strong>
+  <strong>朝ごはん</strong>
 
-    <input
-      id="breakfastInput"
-      type="number"
-      min="0"
-      placeholder="量（g）"
-    >
+  <input
+    id="breakfastInput"
+    type="number"
+    min="0"
+    placeholder="量（g）"
+  >
 
-    <button class="save-button" id="breakfastButton">
-      朝ごはんを記録
-    </button>
+  <button class="save-button" id="breakfastButton">
+    朝ごはんを記録
+  </button>
 
-    <div id="breakfastResult" class="result">
-      未記録
-    </div>
+  <div id="breakfastResult" class="result">
+    未記録
   </div>
 
   <br>
 
-  <div>
-    <strong>夜ごはん</strong>
+  <strong>夜ごはん</strong>
 
-    <input
-      id="dinnerInput"
-      type="number"
-      min="0"
-      placeholder="量（g）"
-    >
+  <input
+    id="dinnerInput"
+    type="number"
+    min="0"
+    placeholder="量（g）"
+  >
 
-    <button class="save-button" id="dinnerButton">
-      夜ごはんを記録
-    </button>
+  <button class="save-button" id="dinnerButton">
+    夜ごはんを記録
+  </button>
 
-    <div id="dinnerResult" class="result">
-      未記録
-    </div>
+  <div id="dinnerResult" class="result">
+    未記録
+  </div>
+
+</div>
+
+
+<!-- 過去の記録 -->
+
+<div class="card">
+
+  <div class="history-title">
+    📅 過去の記録を見る
+  </div>
+
+  <input
+    id="historyDate"
+    type="date"
+  >
+
+  <div id="historyContent">
+    日付を選択してください
   </div>
 
 </div>
@@ -239,19 +299,29 @@ input {
 
 <script>
 
+/* =========================
+   基本設定
+========================= */
+
 const today = new Date();
 
-const dateKey =
-  today.getFullYear() +
-  "-" +
-  String(today.getMonth() + 1).padStart(2, "0") +
-  "-" +
-  String(today.getDate()).padStart(2, "0");
+function makeDateKey(date) {
 
-const storageKey = "kaoruko-log-" + dateKey;
+  return (
+    date.getFullYear() +
+    "-" +
+    String(date.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(date.getDate()).padStart(2, "0")
+  );
+
+}
 
 
-/* 今日の日付 */
+const todayKey = makeDateKey(today);
+
+const storagePrefix = "kaoruko-log-";
+
 
 document.getElementById("today").textContent =
   today.getFullYear() +
@@ -262,22 +332,86 @@ document.getElementById("today").textContent =
   "日";
 
 
-/* 保存データを読み込む */
+/* =========================
+   データ取得
+========================= */
 
-let data = JSON.parse(
-  localStorage.getItem(storageKey) ||
-  '{"poop":0,"pee":0,"vomit":0,"walk":null,"breakfast":null,"dinner":null}'
-);
+function getData(dateKey) {
+
+  let data;
+
+  try {
+
+    data = JSON.parse(
+      localStorage.getItem(storagePrefix + dateKey) ||
+      "{}"
+    );
+
+  } catch (e) {
+
+    data = {};
+
+  }
 
 
-/* 万一古いデータだった場合 */
+  return {
 
-data.poop = Number(data.poop) || 0;
-data.pee = Number(data.pee) || 0;
-data.vomit = Number(data.vomit) || 0;
+    poop: Number(data.poop) || 0,
+
+    pee: Number(data.pee) || 0,
+
+    vomit: Number(data.vomit) || 0,
+
+    walk:
+      data.walk !== undefined &&
+      data.walk !== null &&
+      data.walk !== ""
+        ? Number(data.walk)
+        : null,
+
+    breakfast:
+      data.breakfast !== undefined &&
+      data.breakfast !== null &&
+      data.breakfast !== ""
+        ? Number(data.breakfast)
+        : null,
+
+    dinner:
+      data.dinner !== undefined &&
+      data.dinner !== null &&
+      data.dinner !== ""
+        ? Number(data.dinner)
+        : null
+
+  };
+
+}
 
 
-/* HTML要素 */
+/* =========================
+   データ保存
+========================= */
+
+function saveData(dateKey, data) {
+
+  localStorage.setItem(
+    storagePrefix + dateKey,
+    JSON.stringify(data)
+  );
+
+}
+
+
+/* =========================
+   今日のデータ
+========================= */
+
+let data = getData(todayKey);
+
+
+/* =========================
+   HTML要素
+========================= */
 
 const poopCount =
   document.getElementById("poopCount");
@@ -301,7 +435,9 @@ const message =
   document.getElementById("message");
 
 
-/* 表示を更新 */
+/* =========================
+   表示更新
+========================= */
 
 function render() {
 
@@ -315,60 +451,29 @@ function render() {
     data.vomit + "回";
 
 
-  if (data.walk !== null) {
-
-    walkResult.textContent =
-      data.walk + "分";
-
-  } else {
-
-    walkResult.textContent =
-      "未記録";
-
-  }
+  walkResult.textContent =
+    data.walk !== null
+      ? data.walk + "分"
+      : "未記録";
 
 
-  if (data.breakfast !== null) {
-
-    breakfastResult.textContent =
-      data.breakfast + "g";
-
-  } else {
-
-    breakfastResult.textContent =
-      "未記録";
-
-  }
+  breakfastResult.textContent =
+    data.breakfast !== null
+      ? data.breakfast + "g"
+      : "未記録";
 
 
-  if (data.dinner !== null) {
-
-    dinnerResult.textContent =
-      data.dinner + "g";
-
-  } else {
-
-    dinnerResult.textContent =
-      "未記録";
-
-  }
+  dinnerResult.textContent =
+    data.dinner !== null
+      ? data.dinner + "g"
+      : "未記録";
 
 }
 
 
-/* データを保存 */
-
-function save() {
-
-  localStorage.setItem(
-    storageKey,
-    JSON.stringify(data)
-  );
-
-}
-
-
-/* メッセージ */
+/* =========================
+   メッセージ
+========================= */
 
 function showMessage(text) {
 
@@ -383,13 +488,14 @@ function showMessage(text) {
 }
 
 
-/* ＋−ボタン */
+/* =========================
+   回数変更
+========================= */
 
 function changeCount(type, amount) {
 
   data[type] += amount;
 
-  /* 0未満にはしない */
 
   if (data[type] < 0) {
 
@@ -397,19 +503,25 @@ function changeCount(type, amount) {
 
   }
 
-  save();
+
+  saveData(todayKey, data);
 
   render();
+
 
   if (type === "poop") {
 
     showMessage("💩 記録を更新したよ！");
 
-  } else if (type === "pee") {
+  }
+
+  else if (type === "pee") {
 
     showMessage("💧 記録を更新したよ！");
 
-  } else {
+  }
+
+  else {
 
     showMessage("🤢 記録を更新したよ！");
 
@@ -478,14 +590,19 @@ document
   });
 
 
-/* 🐾 散歩 */
+/* =========================
+   散歩
+========================= */
 
 document
   .getElementById("walkButton")
   .addEventListener("click", function() {
 
     const value =
-      Number(document.getElementById("walkInput").value);
+      Number(
+        document.getElementById("walkInput").value
+      );
+
 
     if (!Number.isFinite(value) || value < 0) {
 
@@ -495,9 +612,10 @@ document
 
     }
 
+
     data.walk = value;
 
-    save();
+    saveData(todayKey, data);
 
     render();
 
@@ -506,14 +624,19 @@ document
   });
 
 
-/* 🍚 朝ごはん */
+/* =========================
+   朝ごはん
+========================= */
 
 document
   .getElementById("breakfastButton")
   .addEventListener("click", function() {
 
     const value =
-      Number(document.getElementById("breakfastInput").value);
+      Number(
+        document.getElementById("breakfastInput").value
+      );
+
 
     if (!Number.isFinite(value) || value < 0) {
 
@@ -523,9 +646,10 @@ document
 
     }
 
+
     data.breakfast = value;
 
-    save();
+    saveData(todayKey, data);
 
     render();
 
@@ -534,14 +658,19 @@ document
   });
 
 
-/* 🍚 夜ごはん */
+/* =========================
+   夜ごはん
+========================= */
 
 document
   .getElementById("dinnerButton")
   .addEventListener("click", function() {
 
     const value =
-      Number(document.getElementById("dinnerInput").value);
+      Number(
+        document.getElementById("dinnerInput").value
+      );
+
 
     if (!Number.isFinite(value) || value < 0) {
 
@@ -551,9 +680,10 @@ document
 
     }
 
+
     data.dinner = value;
 
-    save();
+    saveData(todayKey, data);
 
     render();
 
@@ -562,9 +692,131 @@ document
   });
 
 
+/* =========================
+   過去の記録
+========================= */
+
+const historyDate =
+  document.getElementById("historyDate");
+
+const historyContent =
+  document.getElementById("historyContent");
+
+
+/* 最初は今日 */
+
+historyDate.value = todayKey;
+
+
+function showHistory(dateKey) {
+
+  const history =
+    getData(dateKey);
+
+
+  const dateParts =
+    dateKey.split("-");
+
+
+  const formattedDate =
+    dateParts[0] +
+    "年" +
+    Number(dateParts[1]) +
+    "月" +
+    Number(dateParts[2]) +
+    "日";
+
+
+  const hasData =
+    history.poop > 0 ||
+    history.pee > 0 ||
+    history.vomit > 0 ||
+    history.walk !== null ||
+    history.breakfast !== null ||
+    history.dinner !== null;
+
+
+  if (!hasData) {
+
+    historyContent.innerHTML =
+      '<div class="history-date">' +
+      formattedDate +
+      '</div>' +
+      '<div class="empty">この日の記録はありません</div>';
+
+    return;
+
+  }
+
+
+  historyContent.innerHTML =
+
+    '<div class="history-date">' +
+    formattedDate +
+    '</div>' +
+
+    '<div class="history-row">' +
+    '<span>💩 うんち</span>' +
+    '<strong>' + history.poop + '回</strong>' +
+    '</div>' +
+
+    '<div class="history-row">' +
+    '<span>💧 おしっこ</span>' +
+    '<strong>' + history.pee + '回</strong>' +
+    '</div>' +
+
+    '<div class="history-row">' +
+    '<span>🐾 散歩</span>' +
+    '<strong>' +
+    (history.walk !== null
+      ? history.walk + "分"
+      : "未記録") +
+    '</strong>' +
+    '</div>' +
+
+    '<div class="history-row">' +
+    '<span>🤢 嘔吐</span>' +
+    '<strong>' + history.vomit + '回</strong>' +
+    '</div>' +
+
+    '<div class="history-row">' +
+    '<span>🍚 朝ごはん</span>' +
+    '<strong>' +
+    (history.breakfast !== null
+      ? history.breakfast + "g"
+      : "未記録") +
+    '</strong>' +
+    '</div>' +
+
+    '<div class="history-row">' +
+    '<span>🍚 夜ごはん</span>' +
+    '<strong>' +
+    (history.dinner !== null
+      ? history.dinner + "g"
+      : "未記録") +
+    '</strong>' +
+    '</div>';
+
+}
+
+
+/* 日付を変更したら表示 */
+
+historyDate.addEventListener(
+  "change",
+  function() {
+
+    showHistory(historyDate.value);
+
+  }
+);
+
+
 /* 初期表示 */
 
 render();
+
+showHistory(todayKey);
 
 </script>
 
