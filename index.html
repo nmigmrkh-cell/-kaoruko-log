@@ -7,6 +7,7 @@
 <title>🐶 薫子ログ</title>
 
 <style>
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background: #f7f7f7;
@@ -79,8 +80,7 @@ button:active {
   color: #555;
 }
 
-input[type="number"],
-input[type="date"] {
+input[type="number"] {
   width: 100%;
   box-sizing: border-box;
   padding: 14px;
@@ -109,42 +109,61 @@ input[type="date"] {
   margin-bottom: 20px;
 }
 
+
+/* =========================
+   過去の記録
+========================= */
+
 .history-title {
-  text-align: center;
   font-size: 22px;
-  margin-bottom: 20px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.history-card {
+  background: #fafafa;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  border: 1px solid #eeeeee;
 }
 
 .history-date {
   font-size: 19px;
   font-weight: bold;
-  margin-bottom: 16px;
-  text-align: center;
+  margin-bottom: 12px;
 }
 
-.history-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 9px 0;
-  border-bottom: 1px solid #eee;
+.history-summary {
+  line-height: 1.9;
+  font-size: 16px;
 }
 
-.history-row:last-child {
-  border-bottom: none;
+.history-summary span {
+  white-space: nowrap;
 }
 
-.empty {
+.no-history {
   text-align: center;
   color: #888;
-  padding: 10px;
+  padding: 12px 0;
 }
 
-.reset-button {
+.more-button {
   width: 100%;
+  margin-top: 8px;
+  background: #eeeeee;
+}
+
+.detail {
   margin-top: 10px;
-  background: #f1f1f1;
+  padding-top: 10px;
+  border-top: 1px solid #e5e5e5;
+  font-size: 15px;
   color: #555;
 }
+
 </style>
 </head>
 
@@ -153,12 +172,15 @@ input[type="date"] {
 
 <main>
 
+
 <h1>🐶 薫子ログ</h1>
 
 <div id="today" class="date"></div>
 
 
-<!-- 今日の記録 -->
+<!-- =========================
+     今日の排泄
+========================= -->
 
 <div class="card">
 
@@ -169,25 +191,49 @@ input[type="date"] {
   <div id="poopCount" class="count">0回</div>
 
   <div class="button-row">
-    <button class="minus" id="poopMinus">− 1</button>
-    <button id="poopPlus">💩 ＋1</button>
+
+    <button
+      class="minus"
+      id="poopMinus">
+      − 1
+    </button>
+
+    <button
+      id="poopPlus">
+      💩 ＋1
+    </button>
+
   </div>
 
+
   <br>
+
 
   <div class="label">💧 おしっこ</div>
 
   <div id="peeCount" class="count">0回</div>
 
   <div class="button-row">
-    <button class="minus" id="peeMinus">− 1</button>
-    <button id="peePlus">💧 ＋1</button>
+
+    <button
+      class="minus"
+      id="peeMinus">
+      − 1
+    </button>
+
+    <button
+      id="peePlus">
+      💧 ＋1
+    </button>
+
   </div>
 
 </div>
 
 
-<!-- 散歩 -->
+<!-- =========================
+     散歩
+========================= -->
 
 <div class="card">
 
@@ -200,38 +246,61 @@ input[type="date"] {
     placeholder="散歩した時間（分）"
   >
 
-  <button class="save-button" id="walkButton">
+  <button
+    class="save-button"
+    id="walkButton">
     🐾 散歩を記録
   </button>
 
-  <div id="walkResult" class="result">
+  <div
+    id="walkResult"
+    class="result">
     未記録
   </div>
 
 </div>
 
 
-<!-- 嘔吐 -->
+<!-- =========================
+     嘔吐
+========================= -->
 
 <div class="card">
 
   <h2>🤢 嘔吐</h2>
 
-  <div id="vomitCount" class="count">0回</div>
+  <div
+    id="vomitCount"
+    class="count">
+    0回
+  </div>
 
   <div class="button-row">
-    <button class="minus" id="vomitMinus">− 1</button>
-    <button id="vomitPlus">🤢 ＋1</button>
+
+    <button
+      class="minus"
+      id="vomitMinus">
+      − 1
+    </button>
+
+    <button
+      id="vomitPlus">
+      🤢 ＋1
+    </button>
+
   </div>
 
 </div>
 
 
-<!-- ごはん -->
+<!-- =========================
+     ごはん
+========================= -->
 
 <div class="card">
 
   <h2>🍚 ごはん</h2>
+
 
   <strong>朝ごはん</strong>
 
@@ -242,15 +311,21 @@ input[type="date"] {
     placeholder="量（g）"
   >
 
-  <button class="save-button" id="breakfastButton">
+  <button
+    class="save-button"
+    id="breakfastButton">
     朝ごはんを記録
   </button>
 
-  <div id="breakfastResult" class="result">
+  <div
+    id="breakfastResult"
+    class="result">
     未記録
   </div>
 
+
   <br>
+
 
   <strong>夜ごはん</strong>
 
@@ -261,49 +336,57 @@ input[type="date"] {
     placeholder="量（g）"
   >
 
-  <button class="save-button" id="dinnerButton">
+  <button
+    class="save-button"
+    id="dinnerButton">
     夜ごはんを記録
   </button>
 
-  <div id="dinnerResult" class="result">
+  <div
+    id="dinnerResult"
+    class="result">
     未記録
   </div>
 
 </div>
 
 
-<!-- 過去の記録 -->
+<!-- =========================
+     過去の記録
+========================= -->
 
 <div class="card">
 
   <div class="history-title">
-    📅 過去の記録を見る
+    📅 過去の記録
   </div>
 
-  <input
-    id="historyDate"
-    type="date"
-  >
+  <div id="historyList"></div>
 
-  <div id="historyContent">
-    日付を選択してください
-  </div>
+  <button
+    id="moreButton"
+    class="more-button">
+    もっと見る
+  </button>
 
 </div>
 
 
 <div id="message"></div>
 
+
 </main>
 
 
 <script>
+
 
 /* =========================
    基本設定
 ========================= */
 
 const today = new Date();
+
 
 function makeDateKey(date) {
 
@@ -338,13 +421,14 @@ document.getElementById("today").textContent =
 
 function getData(dateKey) {
 
-  let data;
+  let data = {};
 
   try {
 
     data = JSON.parse(
-      localStorage.getItem(storagePrefix + dateKey) ||
-      "{}"
+      localStorage.getItem(
+        storagePrefix + dateKey
+      ) || "{}"
     );
 
   } catch (e) {
@@ -436,7 +520,7 @@ const message =
 
 
 /* =========================
-   表示更新
+   今日の表示更新
 ========================= */
 
 function render() {
@@ -508,6 +592,8 @@ function changeCount(type, amount) {
 
   render();
 
+  renderHistory();
+
 
   if (type === "poop") {
 
@@ -530,7 +616,9 @@ function changeCount(type, amount) {
 }
 
 
-/* 💩 */
+/* =========================
+   💩
+========================= */
 
 document
   .getElementById("poopPlus")
@@ -550,7 +638,9 @@ document
   });
 
 
-/* 💧 */
+/* =========================
+   💧
+========================= */
 
 document
   .getElementById("peePlus")
@@ -570,7 +660,9 @@ document
   });
 
 
-/* 🤢 */
+/* =========================
+   🤢
+========================= */
 
 document
   .getElementById("vomitPlus")
@@ -591,7 +683,7 @@ document
 
 
 /* =========================
-   散歩
+   🐾 散歩
 ========================= */
 
 document
@@ -619,13 +711,15 @@ document
 
     render();
 
+    renderHistory();
+
     showMessage("🐾 散歩を記録したよ！");
 
   });
 
 
 /* =========================
-   朝ごはん
+   🍚 朝ごはん
 ========================= */
 
 document
@@ -653,13 +747,15 @@ document
 
     render();
 
+    renderHistory();
+
     showMessage("🍚 朝ごはんを記録したよ！");
 
   });
 
 
 /* =========================
-   夜ごはん
+   🍚 夜ごはん
 ========================= */
 
 document
@@ -687,136 +783,252 @@ document
 
     render();
 
+    renderHistory();
+
     showMessage("🍚 夜ごはんを記録したよ！");
 
   });
 
 
 /* =========================
-   過去の記録
+   過去記録が存在するか
 ========================= */
 
-const historyDate =
-  document.getElementById("historyDate");
+function hasData(data) {
 
-const historyContent =
-  document.getElementById("historyContent");
+  return (
+    data.poop > 0 ||
+    data.pee > 0 ||
+    data.vomit > 0 ||
+    data.walk !== null ||
+    data.breakfast !== null ||
+    data.dinner !== null
+  );
 
-
-/* 最初は今日 */
-
-historyDate.value = todayKey;
-
-
-function showHistory(dateKey) {
-
-  const history =
-    getData(dateKey);
+}
 
 
-  const dateParts =
+/* =========================
+   日付表示
+========================= */
+
+function formatDate(dateKey) {
+
+  const parts =
     dateKey.split("-");
 
+  const date =
+    new Date(
+      Number(parts[0]),
+      Number(parts[1]) - 1,
+      Number(parts[2])
+    );
 
-  const formattedDate =
-    dateParts[0] +
-    "年" +
-    Number(dateParts[1]) +
+
+  const weekNames =
+    ["日","月","火","水","木","金","土"];
+
+
+  return (
+    Number(parts[1]) +
     "月" +
-    Number(dateParts[2]) +
-    "日";
+    Number(parts[2]) +
+    "日（" +
+    weekNames[date.getDay()] +
+    "）"
+  );
+
+}
 
 
-  const hasData =
-    history.poop > 0 ||
-    history.pee > 0 ||
-    history.vomit > 0 ||
-    history.walk !== null ||
-    history.breakfast !== null ||
-    history.dinner !== null;
+/* =========================
+   過去記録一覧
+========================= */
+
+const historyList =
+  document.getElementById("historyList");
+
+const moreButton =
+  document.getElementById("moreButton");
 
 
-  if (!hasData) {
+let historyLimit = 14;
 
-    historyContent.innerHTML =
-      '<div class="history-date">' +
-      formattedDate +
-      '</div>' +
-      '<div class="empty">この日の記録はありません</div>';
+
+/* =========================
+   記録がある日を探す
+========================= */
+
+function getHistoryDates() {
+
+  const dates = [];
+
+  const current =
+    new Date();
+
+
+  for (let i = 0; i < 365; i++) {
+
+    const date =
+      new Date(current);
+
+    date.setDate(
+      current.getDate() - i
+    );
+
+
+    const key =
+      makeDateKey(date);
+
+    const record =
+      getData(key);
+
+
+    if (hasData(record)) {
+
+      dates.push(key);
+
+    }
+
+  }
+
+
+  return dates;
+
+}
+
+
+/* =========================
+   履歴を表示
+========================= */
+
+function renderHistory() {
+
+  const dates =
+    getHistoryDates();
+
+
+  historyList.innerHTML = "";
+
+
+  if (dates.length === 0) {
+
+    historyList.innerHTML =
+      '<div class="no-history">' +
+      'まだ過去の記録はありません' +
+      '</div>';
+
+    moreButton.style.display = "none";
 
     return;
 
   }
 
 
-  historyContent.innerHTML =
+  const visibleDates =
+    dates.slice(0, historyLimit);
 
-    '<div class="history-date">' +
-    formattedDate +
-    '</div>' +
 
-    '<div class="history-row">' +
-    '<span>💩 うんち</span>' +
-    '<strong>' + history.poop + '回</strong>' +
-    '</div>' +
+  visibleDates.forEach(function(dateKey) {
 
-    '<div class="history-row">' +
-    '<span>💧 おしっこ</span>' +
-    '<strong>' + history.pee + '回</strong>' +
-    '</div>' +
+    const record =
+      getData(dateKey);
 
-    '<div class="history-row">' +
-    '<span>🐾 散歩</span>' +
-    '<strong>' +
-    (history.walk !== null
-      ? history.walk + "分"
-      : "未記録") +
-    '</strong>' +
-    '</div>' +
 
-    '<div class="history-row">' +
-    '<span>🤢 嘔吐</span>' +
-    '<strong>' + history.vomit + '回</strong>' +
-    '</div>' +
+    const card =
+      document.createElement("div");
 
-    '<div class="history-row">' +
-    '<span>🍚 朝ごはん</span>' +
-    '<strong>' +
-    (history.breakfast !== null
-      ? history.breakfast + "g"
-      : "未記録") +
-    '</strong>' +
-    '</div>' +
+    card.className =
+      "history-card";
 
-    '<div class="history-row">' +
-    '<span>🍚 夜ごはん</span>' +
-    '<strong>' +
-    (history.dinner !== null
-      ? history.dinner + "g"
-      : "未記録") +
-    '</strong>' +
-    '</div>';
+
+    card.innerHTML =
+
+      '<div class="history-date">' +
+      formatDate(dateKey) +
+      '</div>' +
+
+      '<div class="history-summary">' +
+
+      '<span>💩 ' +
+      record.poop +
+      '回</span>　' +
+
+      '<span>💧 ' +
+      record.pee +
+      '回</span>　' +
+
+      '<span>🐾 ' +
+      (record.walk !== null
+        ? record.walk + "分"
+        : "－") +
+      '</span>' +
+
+      '<br>' +
+
+      '<span>🤢 ' +
+      record.vomit +
+      '回</span>　' +
+
+      '<span>🍚 朝 ' +
+      (record.breakfast !== null
+        ? record.breakfast + "g"
+        : "－") +
+      '</span>　' +
+
+      '<span>夜 ' +
+      (record.dinner !== null
+        ? record.dinner + "g"
+        : "－") +
+      '</span>' +
+
+      '</div>';
+
+
+    historyList.appendChild(card);
+
+  });
+
+
+  if (dates.length > historyLimit) {
+
+    moreButton.style.display =
+      "block";
+
+  } else {
+
+    moreButton.style.display =
+      "none";
+
+  }
 
 }
 
 
-/* 日付を変更したら表示 */
+/* =========================
+   もっと見る
+========================= */
 
-historyDate.addEventListener(
-  "change",
+moreButton.addEventListener(
+  "click",
   function() {
 
-    showHistory(historyDate.value);
+    historyLimit += 14;
+
+    renderHistory();
 
   }
 );
 
 
-/* 初期表示 */
+/* =========================
+   初期表示
+========================= */
 
 render();
 
-showHistory(todayKey);
+renderHistory();
+
 
 </script>
 
