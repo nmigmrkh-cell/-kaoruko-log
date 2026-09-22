@@ -3,11 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>🐶 薫子ログ</title>
-
 <style>
-
 body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background: #f7f7f7;
@@ -15,23 +12,19 @@ body {
   padding: 24px;
   color: #222;
 }
-
 main {
   max-width: 520px;
   margin: auto;
 }
-
 h1 {
   text-align: center;
   margin-bottom: 8px;
 }
-
 .date {
   text-align: center;
   color: #777;
   margin-bottom: 24px;
 }
-
 .card {
   background: white;
   border-radius: 20px;
@@ -39,29 +32,24 @@ h1 {
   margin-bottom: 20px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
-
 .card h2 {
   margin-top: 0;
   font-size: 20px;
 }
-
 .label {
   text-align: center;
   font-size: 20px;
 }
-
 .count {
   text-align: center;
   font-size: 40px;
   font-weight: bold;
   margin: 12px 0 16px;
 }
-
 .button-row {
   display: flex;
   gap: 10px;
 }
-
 button {
   flex: 1;
   padding: 16px;
@@ -70,17 +58,15 @@ button {
   font-size: 18px;
   background: #eeeeee;
 }
-
 button:active {
   transform: scale(0.98);
 }
-
 .minus {
   background: #f0f0f0;
   color: #555;
 }
-
-input[type="number"] {
+input[type="number"],
+textarea {
   width: 100%;
   box-sizing: border-box;
   padding: 14px;
@@ -88,80 +74,113 @@ input[type="number"] {
   border-radius: 12px;
   font-size: 18px;
   margin-bottom: 10px;
+  font-family: inherit;
 }
-
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
 .save-button {
   width: 100%;
   background: #e8e8e8;
 }
-
 .result {
   text-align: center;
   font-size: 18px;
   margin-top: 12px;
   font-weight: bold;
 }
-
 #message {
   text-align: center;
   min-height: 30px;
   font-size: 16px;
   margin-bottom: 20px;
 }
-
-
+/* =========================
+   症状
+========================= */
+.symptom-label {
+  font-size: 17px;
+  font-weight: bold;
+  margin: 18px 0 8px;
+}
+.itch-level {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.itch-button {
+  padding: 12px 4px;
+  font-size: 15px;
+  border-radius: 12px;
+  background: #eeeeee;
+}
+.itch-button.selected {
+  background: #555;
+  color: white;
+}
+.symptom-checks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.symptom-check {
+  background: #f5f5f5;
+  border-radius: 14px;
+  padding: 12px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.symptom-check input {
+  width: 20px;
+  height: 20px;
+}
+.symptom-result {
+  margin-top: 14px;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 12px;
+  color: #555;
+  line-height: 1.7;
+}
 /* =========================
    グラフ
 ========================= */
-
 .chart-title {
   font-size: 22px;
   font-weight: bold;
   margin-bottom: 6px;
 }
-
 .chart-subtitle {
   color: #777;
   font-size: 14px;
   margin-bottom: 18px;
 }
-
 .chart-box {
   margin-bottom: 28px;
 }
-
 .chart-name {
   font-size: 17px;
   font-weight: bold;
   margin-bottom: 8px;
 }
-
 .chart {
   width: 100%;
   height: 180px;
   display: block;
 }
-
-.chart-empty {
-  text-align: center;
-  color: #888;
-  padding: 30px 10px;
-  background: #fafafa;
-  border-radius: 14px;
-}
-
-
 /* =========================
    過去の記録
 ========================= */
-
 .history-title {
   font-size: 22px;
   font-weight: bold;
   margin-bottom: 18px;
   text-align: center;
 }
-
 .history-card {
   background: #fafafa;
   border-radius: 16px;
@@ -169,321 +188,256 @@ input[type="number"] {
   margin-bottom: 14px;
   border: 1px solid #eeeeee;
 }
-
 .history-date {
   font-size: 19px;
   font-weight: bold;
   margin-bottom: 12px;
 }
-
 .history-summary {
   line-height: 1.9;
   font-size: 16px;
 }
-
 .history-summary span {
   white-space: nowrap;
 }
-
 .no-history {
   text-align: center;
   color: #888;
   padding: 12px 0;
 }
-
 .more-button {
   width: 100%;
   margin-top: 8px;
   background: #eeeeee;
 }
-
 </style>
 </head>
-
-
 <body>
-
 <main>
-
-
 <h1>🐶 薫子ログ</h1>
-
 <div id="today" class="date"></div>
-
-
 <!-- =========================
      今日の排泄
 ========================= -->
-
 <div class="card">
-
   <h2>🚽 排泄</h2>
-
   <div class="label">💩 うんち</div>
-
   <div id="poopCount" class="count">0回</div>
-
   <div class="button-row">
-
-    <button
-      class="minus"
-      id="poopMinus">
+    <button class="minus" id="poopMinus">
       − 1
     </button>
-
-    <button
-      id="poopPlus">
+    <button id="poopPlus">
       💩 ＋1
     </button>
-
   </div>
-
-
   <br>
-
-
   <div class="label">💧 おしっこ</div>
-
   <div id="peeCount" class="count">0回</div>
-
   <div class="button-row">
-
-    <button
-      class="minus"
-      id="peeMinus">
+    <button class="minus" id="peeMinus">
       − 1
     </button>
-
-    <button
-      id="peePlus">
+    <button id="peePlus">
       💧 ＋1
     </button>
-
   </div>
-
 </div>
-
-
 <!-- =========================
      散歩
 ========================= -->
-
 <div class="card">
-
   <h2>🐾 お散歩</h2>
-
   <input
     id="walkInput"
     type="number"
     min="0"
     placeholder="散歩した時間（分）"
   >
-
-  <button
-    class="save-button"
-    id="walkButton">
+  <button class="save-button" id="walkButton">
     🐾 散歩を記録
   </button>
-
-  <div
-    id="walkResult"
-    class="result">
+  <div id="walkResult" class="result">
     未記録
   </div>
-
 </div>
-
-
 <!-- =========================
      嘔吐
 ========================= -->
-
 <div class="card">
-
   <h2>🤢 嘔吐</h2>
-
-  <div
-    id="vomitCount"
-    class="count">
+  <div id="vomitCount" class="count">
     0回
   </div>
-
   <div class="button-row">
-
-    <button
-      class="minus"
-      id="vomitMinus">
+    <button class="minus" id="vomitMinus">
       − 1
     </button>
-
-    <button
-      id="vomitPlus">
+    <button id="vomitPlus">
       🤢 ＋1
     </button>
-
   </div>
-
 </div>
-
-
 <!-- =========================
      ごはん
 ========================= -->
-
 <div class="card">
-
   <h2>🍚 ごはん</h2>
-
-
   <strong>朝ごはん</strong>
-
   <input
     id="breakfastInput"
     type="number"
     min="0"
     placeholder="量（g）"
   >
-
-  <button
-    class="save-button"
-    id="breakfastButton">
+  <button class="save-button" id="breakfastButton">
     朝ごはんを記録
   </button>
-
-  <div
-    id="breakfastResult"
-    class="result">
+  <div id="breakfastResult" class="result">
     未記録
   </div>
-
-
   <br>
-
-
   <strong>夜ごはん</strong>
-
   <input
     id="dinnerInput"
     type="number"
     min="0"
     placeholder="量（g）"
   >
-
-  <button
-    class="save-button"
-    id="dinnerButton">
+  <button class="save-button" id="dinnerButton">
     夜ごはんを記録
   </button>
-
-  <div
-    id="dinnerResult"
-    class="result">
+  <div id="dinnerResult" class="result">
     未記録
   </div>
-
 </div>
-
-
+<!-- =========================
+     症状・かゆみ
+========================= -->
+<div class="card">
+  <h2>🩺 症状・かゆみ</h2>
+  <div class="symptom-label">
+    🐾 今日のかゆみレベル
+  </div>
+  <div class="itch-level">
+    <button class="itch-button" data-level="0">0<br>なし</button>
+    <button class="itch-button" data-level="1">1</button>
+    <button class="itch-button" data-level="2">2</button>
+    <button class="itch-button" data-level="3">3</button>
+    <button class="itch-button" data-level="4">4</button>
+    <button class="itch-button" data-level="5">5<br>強い</button>
+  </div>
+  <div id="itchResult" class="result">
+    未記録
+  </div>
+  <div class="symptom-label">
+    気になった症状
+  </div>
+  <div class="symptom-checks">
+    <label class="symptom-check">
+      <input type="checkbox" id="symptomEar">
+      👂 耳
+    </label>
+    <label class="symptom-check">
+      <input type="checkbox" id="symptomMouth">
+      👄 口周り
+    </label>
+    <label class="symptom-check">
+      <input type="checkbox" id="symptomPaw">
+      🐾 足なめ・足噛み
+    </label>
+    <label class="symptom-check">
+      <input type="checkbox" id="symptomBody">
+      🐶 体を掻く
+    </label>
+    <label class="symptom-check">
+      <input type="checkbox" id="symptomRed">
+      🔴 赤み
+    </label>
+    <label class="symptom-check">
+      <input type="checkbox" id="symptomOther">
+      🩹 その他
+    </label>
+  </div>
+  <div class="symptom-label">
+    📝 メモ
+  </div>
+  <textarea
+    id="symptomMemo"
+    placeholder="気になったことを自由にメモ"
+  ></textarea>
+  <button
+    class="save-button"
+    id="symptomButton">
+    🩺 症状を記録
+  </button>
+  <div
+    id="symptomResult"
+    class="symptom-result">
+    未記録
+  </div>
+</div>
 <!-- =========================
      グラフ
 ========================= -->
-
 <div class="card">
-
   <div class="chart-title">
     📊 7日間の記録
   </div>
-
   <div class="chart-subtitle">
     今日を含む直近7日間
   </div>
-
-
   <div class="chart-box">
-
     <div class="chart-name">
       💩 うんち
     </div>
-
     <div id="poopChart"></div>
-
   </div>
-
-
   <div class="chart-box">
-
     <div class="chart-name">
       💧 おしっこ
     </div>
-
     <div id="peeChart"></div>
-
   </div>
-
-
   <div class="chart-box">
-
     <div class="chart-name">
       🐾 散歩
     </div>
-
     <div id="walkChart"></div>
-
   </div>
-
-
   <div class="chart-box">
-
     <div class="chart-name">
       🍚 ごはん
     </div>
-
     <div id="foodChart"></div>
-
   </div>
-
+  <div class="chart-box">
+    <div class="chart-name">
+      🐾 かゆみ
+    </div>
+    <div id="itchChart"></div>
+  </div>
 </div>
-
-
 <!-- =========================
      過去の記録
 ========================= -->
-
 <div class="card">
-
   <div class="history-title">
     📅 過去の記録
   </div>
-
   <div id="historyList"></div>
-
-  <button
-    id="moreButton"
-    class="more-button">
+  <button id="moreButton" class="more-button">
     もっと見る
   </button>
-
 </div>
-
-
 <div id="message"></div>
-
-
 </main>
-
-
 <script>
-
-
 /* =========================
    基本設定
 ========================= */
-
 const today = new Date();
-
-
 function makeDateKey(date) {
-
   return (
     date.getFullYear() +
     "-" +
@@ -491,15 +445,9 @@ function makeDateKey(date) {
     "-" +
     String(date.getDate()).padStart(2, "0")
   );
-
 }
-
-
 const todayKey = makeDateKey(today);
-
 const storagePrefix = "kaoruko-log-";
-
-
 document.getElementById("today").textContent =
   today.getFullYear() +
   "年" +
@@ -507,396 +455,376 @@ document.getElementById("today").textContent =
   "月" +
   today.getDate() +
   "日";
-
-
 /* =========================
    データ取得
 ========================= */
-
 function getData(dateKey) {
-
   let data = {};
-
   try {
-
     data = JSON.parse(
       localStorage.getItem(
         storagePrefix + dateKey
       ) || "{}"
     );
-
   } catch (e) {
-
     data = {};
-
   }
-
-
   return {
-
     poop: Number(data.poop) || 0,
-
     pee: Number(data.pee) || 0,
-
     vomit: Number(data.vomit) || 0,
-
     walk:
       data.walk !== undefined &&
       data.walk !== null &&
       data.walk !== ""
         ? Number(data.walk)
         : null,
-
     breakfast:
       data.breakfast !== undefined &&
       data.breakfast !== null &&
       data.breakfast !== ""
         ? Number(data.breakfast)
         : null,
-
     dinner:
       data.dinner !== undefined &&
       data.dinner !== null &&
       data.dinner !== ""
         ? Number(data.dinner)
-        : null
-
+        : null,
+    itch:
+      data.itch !== undefined &&
+      data.itch !== null &&
+      data.itch !== ""
+        ? Number(data.itch)
+        : null,
+    symptoms:
+      Array.isArray(data.symptoms)
+        ? data.symptoms
+        : [],
+    symptomMemo:
+      typeof data.symptomMemo === "string"
+        ? data.symptomMemo
+        : ""
   };
-
 }
-
-
 /* =========================
    データ保存
 ========================= */
-
 function saveData(dateKey, data) {
-
   localStorage.setItem(
     storagePrefix + dateKey,
     JSON.stringify(data)
   );
-
 }
-
-
 /* =========================
    今日のデータ
 ========================= */
-
 let data = getData(todayKey);
-
-
 /* =========================
    HTML要素
 ========================= */
-
 const poopCount =
   document.getElementById("poopCount");
-
 const peeCount =
   document.getElementById("peeCount");
-
 const vomitCount =
   document.getElementById("vomitCount");
-
 const walkResult =
   document.getElementById("walkResult");
-
 const breakfastResult =
   document.getElementById("breakfastResult");
-
 const dinnerResult =
   document.getElementById("dinnerResult");
-
+const itchResult =
+  document.getElementById("itchResult");
+const symptomResult =
+  document.getElementById("symptomResult");
 const message =
   document.getElementById("message");
-
-
+/* =========================
+   かゆみボタン
+========================= */
+const itchButtons =
+  document.querySelectorAll(".itch-button");
+itchButtons.forEach(function(button) {
+  button.addEventListener("click", function() {
+    data.itch =
+      Number(button.dataset.level);
+    itchButtons.forEach(function(item) {
+      item.classList.remove("selected");
+    });
+    button.classList.add("selected");
+  });
+});
+/* =========================
+   症状表示
+========================= */
+const symptomMap = {
+  ear: "👂 耳",
+  mouth: "👄 口周り",
+  paw: "🐾 足なめ・足噛み",
+  body: "🐶 体を掻く",
+  red: "🔴 赤み",
+  other: "🩹 その他"
+};
+function renderSymptomForm() {
+  const ids = [
+    "symptomEar",
+    "symptomMouth",
+    "symptomPaw",
+    "symptomBody",
+    "symptomRed",
+    "symptomOther"
+  ];
+  const keys = [
+    "ear",
+    "mouth",
+    "paw",
+    "body",
+    "red",
+    "other"
+  ];
+  ids.forEach(function(id, index) {
+    document.getElementById(id).checked =
+      data.symptoms.includes(keys[index]);
+  });
+  document.getElementById("symptomMemo").value =
+    data.symptomMemo;
+  itchButtons.forEach(function(button) {
+    button.classList.toggle(
+      "selected",
+      data.itch !== null &&
+      Number(button.dataset.level) === data.itch
+    );
+  });
+}
+function renderSymptomResult() {
+  let html = "";
+  if (data.itch !== null) {
+    html +=
+      "🐾 かゆみ：<strong>" +
+      data.itch +
+      "/5</strong><br>";
+  }
+  if (data.symptoms.length > 0) {
+    html +=
+      data.symptoms
+        .map(function(key) {
+          return symptomMap[key] || "";
+        })
+        .join("　");
+    html += "<br>";
+  }
+  if (data.symptomMemo) {
+    html +=
+      "📝 " +
+      data.symptomMemo;
+  }
+  symptomResult.innerHTML =
+    html || "未記録";
+  itchResult.textContent =
+    data.itch !== null
+      ? data.itch + " / 5"
+      : "未記録";
+}
 /* =========================
    今日の表示
 ========================= */
-
 function render() {
-
   poopCount.textContent =
     data.poop + "回";
-
   peeCount.textContent =
     data.pee + "回";
-
   vomitCount.textContent =
     data.vomit + "回";
-
-
   walkResult.textContent =
     data.walk !== null
       ? data.walk + "分"
       : "未記録";
-
-
   breakfastResult.textContent =
     data.breakfast !== null
       ? data.breakfast + "g"
       : "未記録";
-
-
   dinnerResult.textContent =
     data.dinner !== null
       ? data.dinner + "g"
       : "未記録";
-
+  renderSymptomResult();
 }
-
-
 /* =========================
    メッセージ
 ========================= */
-
 function showMessage(text) {
-
   message.textContent = text;
-
   setTimeout(function() {
-
     message.textContent = "";
-
   }, 1200);
-
 }
-
-
 /* =========================
    回数変更
 ========================= */
-
 function changeCount(type, amount) {
-
   data[type] += amount;
-
-
   if (data[type] < 0) {
-
     data[type] = 0;
-
   }
-
-
   saveData(todayKey, data);
-
   render();
-
   renderHistory();
-
   renderCharts();
-
-
   showMessage("記録を更新したよ！");
-
 }
-
-
 /* =========================
    💩
 ========================= */
-
 document
   .getElementById("poopPlus")
   .addEventListener("click", function() {
-
     changeCount("poop", 1);
-
   });
-
-
 document
   .getElementById("poopMinus")
   .addEventListener("click", function() {
-
     changeCount("poop", -1);
-
   });
-
-
 /* =========================
    💧
 ========================= */
-
 document
   .getElementById("peePlus")
   .addEventListener("click", function() {
-
     changeCount("pee", 1);
-
   });
-
-
 document
   .getElementById("peeMinus")
   .addEventListener("click", function() {
-
     changeCount("pee", -1);
-
   });
-
-
 /* =========================
    🤢
 ========================= */
-
 document
   .getElementById("vomitPlus")
   .addEventListener("click", function() {
-
     changeCount("vomit", 1);
-
   });
-
-
 document
   .getElementById("vomitMinus")
   .addEventListener("click", function() {
-
     changeCount("vomit", -1);
-
   });
-
-
 /* =========================
    🐾 散歩
 ========================= */
-
 document
   .getElementById("walkButton")
   .addEventListener("click", function() {
-
     const value =
       Number(
         document.getElementById("walkInput").value
       );
-
-
     if (!Number.isFinite(value) || value < 0) {
-
       showMessage("散歩時間を入力してね");
-
       return;
-
     }
-
-
     data.walk = value;
-
     saveData(todayKey, data);
-
     render();
-
     renderHistory();
-
     renderCharts();
-
     showMessage("🐾 散歩を記録したよ！");
-
   });
-
-
 /* =========================
    🍚 朝ごはん
 ========================= */
-
 document
   .getElementById("breakfastButton")
   .addEventListener("click", function() {
-
     const value =
       Number(
         document.getElementById("breakfastInput").value
       );
-
-
     if (!Number.isFinite(value) || value < 0) {
-
       showMessage("朝ごはんの量を入力してね");
-
       return;
-
     }
-
-
     data.breakfast = value;
-
     saveData(todayKey, data);
-
     render();
-
     renderHistory();
-
     renderCharts();
-
     showMessage("🍚 朝ごはんを記録したよ！");
-
   });
-
-
 /* =========================
    🍚 夜ごはん
 ========================= */
-
 document
   .getElementById("dinnerButton")
   .addEventListener("click", function() {
-
     const value =
       Number(
         document.getElementById("dinnerInput").value
       );
-
-
     if (!Number.isFinite(value) || value < 0) {
-
       showMessage("夜ごはんの量を入力してね");
-
       return;
-
     }
-
-
     data.dinner = value;
-
     saveData(todayKey, data);
-
     render();
-
     renderHistory();
-
     renderCharts();
-
     showMessage("🍚 夜ごはんを記録したよ！");
-
   });
-
-
+/* =========================
+   🩺 症状記録
+========================= */
+document
+  .getElementById("symptomButton")
+  .addEventListener("click", function() {
+    const checkboxMap = {
+      symptomEar: "ear",
+      symptomMouth: "mouth",
+      symptomPaw: "paw",
+      symptomBody: "body",
+      symptomRed: "red",
+      symptomOther: "other"
+    };
+    data.symptoms = [];
+    Object.keys(checkboxMap).forEach(function(id) {
+      if (
+        document.getElementById(id).checked
+      ) {
+        data.symptoms.push(
+          checkboxMap[id]
+        );
+      }
+    });
+    data.symptomMemo =
+      document
+        .getElementById("symptomMemo")
+        .value
+        .trim();
+    saveData(todayKey, data);
+    render();
+    renderHistory();
+    renderCharts();
+    showMessage("🩺 症状を記録したよ！");
+  });
 /* =========================
    日付表示
 ========================= */
-
 function formatDate(dateKey) {
-
   const parts =
     dateKey.split("-");
-
   const date =
     new Date(
       Number(parts[0]),
       Number(parts[1]) - 1,
       Number(parts[2])
     );
-
-
   const weekNames =
     ["日","月","火","水","木","金","土"];
-
-
   return (
     Number(parts[1]) +
     "月" +
@@ -905,226 +833,167 @@ function formatDate(dateKey) {
     weekNames[date.getDay()] +
     "）"
   );
-
 }
-
-
 /* =========================
    過去記録があるか
 ========================= */
-
 function hasData(record) {
-
   return (
     record.poop > 0 ||
     record.pee > 0 ||
     record.vomit > 0 ||
     record.walk !== null ||
     record.breakfast !== null ||
-    record.dinner !== null
+    record.dinner !== null ||
+    record.itch !== null ||
+    record.symptoms.length > 0 ||
+    record.symptomMemo !== ""
   );
-
 }
-
-
 /* =========================
    過去の日付取得
 ========================= */
-
 function getHistoryDates() {
-
   const dates = [];
-
   const current =
     new Date();
-
-
   for (let i = 0; i < 365; i++) {
-
     const date =
       new Date(current);
-
     date.setDate(
       current.getDate() - i
     );
-
-
     const key =
       makeDateKey(date);
-
     const record =
       getData(key);
-
-
     if (hasData(record)) {
-
       dates.push(key);
-
     }
-
   }
-
-
   return dates;
-
 }
-
-
 /* =========================
    過去記録一覧
 ========================= */
-
 const historyList =
   document.getElementById("historyList");
-
 const moreButton =
   document.getElementById("moreButton");
-
-
 let historyLimit = 14;
-
-
 function renderHistory() {
-
   const dates =
     getHistoryDates();
-
-
   historyList.innerHTML = "";
-
-
   if (dates.length === 0) {
-
     historyList.innerHTML =
       '<div class="no-history">' +
       'まだ過去の記録はありません' +
       '</div>';
-
     moreButton.style.display = "none";
-
     return;
-
   }
-
-
   const visibleDates =
     dates.slice(0, historyLimit);
-
-
   visibleDates.forEach(function(dateKey) {
-
     const record =
       getData(dateKey);
-
-
     const card =
       document.createElement("div");
-
     card.className =
       "history-card";
-
-
+    let symptomsText = "";
+    if (record.itch !== null) {
+      symptomsText +=
+        "🐾 かゆみ " +
+        record.itch +
+        "/5";
+    }
+    if (record.symptoms.length > 0) {
+      if (symptomsText) {
+        symptomsText += "　";
+      }
+      symptomsText +=
+        record.symptoms
+          .map(function(key) {
+            return symptomMap[key] || "";
+          })
+          .join("　");
+    }
     card.innerHTML =
-
       '<div class="history-date">' +
       formatDate(dateKey) +
       '</div>' +
-
       '<div class="history-summary">' +
-
       '<span>💩 ' +
       record.poop +
       '回</span>　' +
-
       '<span>💧 ' +
       record.pee +
       '回</span>　' +
-
       '<span>🐾 ' +
       (record.walk !== null
         ? record.walk + "分"
         : "－") +
       '</span>' +
-
       '<br>' +
-
       '<span>🤢 ' +
       record.vomit +
       '回</span>　' +
-
       '<span>🍚 朝 ' +
       (record.breakfast !== null
         ? record.breakfast + "g"
         : "－") +
       '</span>　' +
-
       '<span>夜 ' +
       (record.dinner !== null
         ? record.dinner + "g"
         : "－") +
       '</span>' +
-
+      (symptomsText
+        ? '<br><span>' +
+          symptomsText +
+          '</span>'
+        : '') +
+      (record.symptomMemo
+        ? '<br><span>📝 ' +
+          record.symptomMemo +
+          '</span>'
+        : '') +
       '</div>';
-
-
     historyList.appendChild(card);
-
   });
-
-
   if (dates.length > historyLimit) {
-
     moreButton.style.display =
       "block";
-
   } else {
-
     moreButton.style.display =
       "none";
-
   }
-
 }
-
-
 /* =========================
    もっと見る
 ========================= */
-
 moreButton.addEventListener(
   "click",
   function() {
-
     historyLimit += 14;
-
     renderHistory();
-
   }
 );
-
-
 /* =========================
    グラフ用データ
 ========================= */
-
 function getLast7Days() {
-
   const days = [];
-
   const current =
     new Date();
-
-
   for (let i = 6; i >= 0; i--) {
-
     const date =
       new Date(current);
-
     date.setDate(
       current.getDate() - i
     );
-
-
     days.push({
       key: makeDateKey(date),
       label:
@@ -1132,106 +1001,69 @@ function getLast7Days() {
         "/" +
         date.getDate()
     });
-
   }
-
-
   return days;
-
 }
-
-
 /* =========================
    SVGグラフ
 ========================= */
-
 function createLineChart(
   elementId,
   values,
   labels,
   unit
 ) {
-
   const container =
     document.getElementById(elementId);
-
-
   const width = 440;
   const height = 180;
-
   const paddingLeft = 35;
   const paddingRight = 10;
   const paddingTop = 15;
   const paddingBottom = 35;
-
-
   const chartWidth =
     width -
     paddingLeft -
     paddingRight;
-
-
   const chartHeight =
     height -
     paddingTop -
     paddingBottom;
-
-
   const maxValue =
     Math.max(...values, 1);
-
-
   const points =
     values.map(function(value, index) {
-
       const x =
         paddingLeft +
         (chartWidth * index / 6);
-
-
       const y =
         paddingTop +
         chartHeight -
         (value / maxValue) *
         chartHeight;
-
-
       return {
         x: x,
         y: y,
         value: value
       };
-
     });
-
-
   const line =
     points.map(function(point, index) {
-
       return (
         (index === 0 ? "M" : "L") +
         point.x +
         " " +
         point.y
       );
-
     }).join(" ");
-
-
   let svg =
     '<svg class="chart" viewBox="0 0 440 180" ' +
     'preserveAspectRatio="none">';
-
-
   /* 横線 */
-
   for (let i = 0; i <= 4; i++) {
-
     const y =
       paddingTop +
       (chartHeight * i / 4);
-
-
     svg +=
       '<line x1="' +
       paddingLeft +
@@ -1242,12 +1074,8 @@ function createLineChart(
       '" y2="' +
       y +
       '" stroke="#eeeeee" />';
-
   }
-
-
   /* 縦ラベル */
-
   svg +=
     '<text x="2" y="' +
     (paddingTop + 5) +
@@ -1255,18 +1083,13 @@ function createLineChart(
     maxValue +
     unit +
     '</text>';
-
-
   svg +=
     '<text x="8" y="' +
     (paddingTop + chartHeight + 4) +
     '" font-size="11" fill="#888">0' +
     unit +
     '</text>';
-
-
   /* 折れ線 */
-
   svg +=
     '<path d="' +
     line +
@@ -1274,20 +1097,14 @@ function createLineChart(
     'stroke-width="3" ' +
     'stroke-linecap="round" ' +
     'stroke-linejoin="round" />';
-
-
   /* 点 */
-
   points.forEach(function(point) {
-
     svg +=
       '<circle cx="' +
       point.x +
       '" cy="' +
       point.y +
       '" r="4" fill="#555" />';
-
-
     svg +=
       '<text x="' +
       point.x +
@@ -1297,19 +1114,12 @@ function createLineChart(
       'font-size="11" fill="#333">' +
       point.value +
       '</text>';
-
   });
-
-
   /* 日付 */
-
   labels.forEach(function(label, index) {
-
     const x =
       paddingLeft +
       (chartWidth * index / 6);
-
-
     svg +=
       '<text x="' +
       x +
@@ -1319,138 +1129,93 @@ function createLineChart(
       'font-size="11" fill="#777">' +
       label +
       '</text>';
-
   });
-
-
   svg += "</svg>";
-
-
   container.innerHTML = svg;
-
 }
-
-
 /* =========================
    グラフ表示
 ========================= */
-
 function renderCharts() {
-
   const days =
     getLast7Days();
-
-
   const labels =
     days.map(function(day) {
-
       return day.label;
-
     });
-
-
   const records =
     days.map(function(day) {
-
       return getData(day.key);
-
     });
-
-
   const poopValues =
     records.map(function(record) {
-
       return record.poop;
-
     });
-
-
   const peeValues =
     records.map(function(record) {
-
       return record.pee;
-
     });
-
-
   const walkValues =
     records.map(function(record) {
-
       return record.walk !== null
         ? record.walk
         : 0;
-
     });
-
-
   const foodValues =
     records.map(function(record) {
-
       let total = 0;
-
       if (record.breakfast !== null) {
-
         total += record.breakfast;
-
       }
-
       if (record.dinner !== null) {
-
         total += record.dinner;
-
       }
-
       return total;
-
     });
-
-
+  const itchValues =
+    records.map(function(record) {
+      return record.itch !== null
+        ? record.itch
+        : 0;
+    });
   createLineChart(
     "poopChart",
     poopValues,
     labels,
     "回"
   );
-
-
   createLineChart(
     "peeChart",
     peeValues,
     labels,
     "回"
   );
-
-
   createLineChart(
     "walkChart",
     walkValues,
     labels,
     "分"
   );
-
-
   createLineChart(
     "foodChart",
     foodValues,
     labels,
     "g"
   );
-
+  createLineChart(
+    "itchChart",
+    itchValues,
+    labels,
+    "/5"
+  );
 }
-
-
 /* =========================
    初期表示
 ========================= */
-
 render();
-
+renderSymptomForm();
 renderHistory();
-
 renderCharts();
-
-
 </script>
-
 </body>
 </html>
