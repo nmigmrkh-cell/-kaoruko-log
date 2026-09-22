@@ -210,6 +210,107 @@ textarea {
   margin-top: 8px;
   background: #eeeeee;
 }
+/* =========================
+   病院用サマリー
+========================= */
+.summary-periods {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.period-button {
+  padding: 12px 4px;
+  font-size: 15px;
+  background: #eeeeee;
+}
+.period-button.selected {
+  background: #555;
+  color: white;
+}
+.summary-header {
+  background: #fafafa;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  line-height: 1.7;
+}
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.summary-item {
+  background: #fafafa;
+  border-radius: 14px;
+  padding: 14px;
+}
+.summary-item-label {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 5px;
+}
+.summary-item-value {
+  font-size: 22px;
+  font-weight: bold;
+}
+.summary-section {
+  margin-top: 22px;
+}
+.summary-section-title {
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.symptom-frequency {
+  line-height: 2;
+  background: #fafafa;
+  padding: 14px;
+  border-radius: 14px;
+}
+.memo-list {
+  background: #fafafa;
+  border-radius: 14px;
+  padding: 14px;
+  line-height: 1.7;
+}
+.memo-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+.memo-item:last-child {
+  border-bottom: none;
+}
+.summary-note {
+  font-size: 13px;
+  color: #888;
+  margin-top: 14px;
+  line-height: 1.6;
+}
+.empty-summary {
+  text-align: center;
+  color: #888;
+  padding: 20px 0;
+}
+/* =========================
+   印刷
+========================= */
+@media print {
+  body {
+    background: white;
+    padding: 0;
+  }
+  main {
+    max-width: none;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+}
 </style>
 </head>
 <body>
@@ -320,12 +421,24 @@ textarea {
     🐾 今日のかゆみレベル
   </div>
   <div class="itch-level">
-    <button class="itch-button" data-level="0">0<br>なし</button>
-    <button class="itch-button" data-level="1">1</button>
-    <button class="itch-button" data-level="2">2</button>
-    <button class="itch-button" data-level="3">3</button>
-    <button class="itch-button" data-level="4">4</button>
-    <button class="itch-button" data-level="5">5<br>強い</button>
+    <button class="itch-button" data-level="0">
+      0<br>なし
+    </button>
+    <button class="itch-button" data-level="1">
+      1
+    </button>
+    <button class="itch-button" data-level="2">
+      2
+    </button>
+    <button class="itch-button" data-level="3">
+      3
+    </button>
+    <button class="itch-button" data-level="4">
+      4
+    </button>
+    <button class="itch-button" data-level="5">
+      5<br>強い
+    </button>
   </div>
   <div id="itchResult" class="result">
     未記録
@@ -366,15 +479,39 @@ textarea {
     id="symptomMemo"
     placeholder="気になったことを自由にメモ"
   ></textarea>
-  <button
-    class="save-button"
-    id="symptomButton">
+  <button class="save-button" id="symptomButton">
     🩺 症状を記録
   </button>
-  <div
-    id="symptomResult"
-    class="symptom-result">
+  <div id="symptomResult" class="symptom-result">
     未記録
+  </div>
+</div>
+<!-- =========================
+     病院用サマリー
+========================= -->
+<div class="card" id="hospitalSummary">
+  <h2>🏥 病院用サマリー</h2>
+  <div class="summary-periods">
+    <button
+      class="period-button selected"
+      data-days="7">
+      7日
+    </button>
+    <button
+      class="period-button"
+      data-days="14">
+      14日
+    </button>
+    <button
+      class="period-button"
+      data-days="30">
+      30日
+    </button>
+  </div>
+  <div id="summaryContent"></div>
+  <div class="summary-note">
+    ※ このサマリーは薫子の記録を集計したものです。
+    診断や治療の判断は獣医師にご相談ください。
   </div>
 </div>
 <!-- =========================
@@ -542,6 +679,17 @@ const symptomResult =
 const message =
   document.getElementById("message");
 /* =========================
+   症状マップ
+========================= */
+const symptomMap = {
+  ear: "👂 耳",
+  mouth: "👄 口周り",
+  paw: "🐾 足なめ・足噛み",
+  body: "🐶 体を掻く",
+  red: "🔴 赤み",
+  other: "🩹 その他"
+};
+/* =========================
    かゆみボタン
 ========================= */
 const itchButtons =
@@ -557,16 +705,8 @@ itchButtons.forEach(function(button) {
   });
 });
 /* =========================
-   症状表示
+   症状フォーム表示
 ========================= */
-const symptomMap = {
-  ear: "👂 耳",
-  mouth: "👄 口周り",
-  paw: "🐾 足なめ・足噛み",
-  body: "🐶 体を掻く",
-  red: "🔴 赤み",
-  other: "🩹 その他"
-};
 function renderSymptomForm() {
   const ids = [
     "symptomEar",
@@ -598,6 +738,9 @@ function renderSymptomForm() {
     );
   });
 }
+/* =========================
+   症状結果表示
+========================= */
 function renderSymptomResult() {
   let html = "";
   if (data.itch !== null) {
@@ -672,6 +815,7 @@ function changeCount(type, amount) {
   render();
   renderHistory();
   renderCharts();
+  renderHospitalSummary();
   showMessage("記録を更新したよ！");
 }
 /* =========================
@@ -732,6 +876,7 @@ document
     render();
     renderHistory();
     renderCharts();
+    renderHospitalSummary();
     showMessage("🐾 散歩を記録したよ！");
   });
 /* =========================
@@ -753,6 +898,7 @@ document
     render();
     renderHistory();
     renderCharts();
+    renderHospitalSummary();
     showMessage("🍚 朝ごはんを記録したよ！");
   });
 /* =========================
@@ -774,6 +920,7 @@ document
     render();
     renderHistory();
     renderCharts();
+    renderHospitalSummary();
     showMessage("🍚 夜ごはんを記録したよ！");
   });
 /* =========================
@@ -809,6 +956,7 @@ document
     render();
     renderHistory();
     renderCharts();
+    renderHospitalSummary();
     showMessage("🩺 症状を記録したよ！");
   });
 /* =========================
@@ -835,7 +983,7 @@ function formatDate(dateKey) {
   );
 }
 /* =========================
-   過去記録があるか
+   データ有無
 ========================= */
 function hasData(record) {
   return (
@@ -851,7 +999,7 @@ function hasData(record) {
   );
 }
 /* =========================
-   過去の日付取得
+   過去の日付
 ========================= */
 function getHistoryDates() {
   const dates = [];
@@ -982,6 +1130,356 @@ moreButton.addEventListener(
   }
 );
 /* =========================
+   集計対象の日付
+========================= */
+function getPeriodDates(days) {
+  const result = [];
+  const current =
+    new Date();
+  for (let i = days - 1; i >= 0; i--) {
+    const date =
+      new Date(current);
+    date.setDate(
+      current.getDate() - i
+    );
+    result.push(
+      makeDateKey(date)
+    );
+  }
+  return result;
+}
+/* =========================
+   平均値
+========================= */
+function average(values) {
+  if (values.length === 0) {
+    return 0;
+  }
+  const total =
+    values.reduce(
+      function(sum, value) {
+        return sum + value;
+      },
+      0
+    );
+  return total / values.length;
+}
+/* =========================
+   病院用サマリー
+========================= */
+let summaryDays = 7;
+function renderHospitalSummary() {
+  const container =
+    document.getElementById(
+      "summaryContent"
+    );
+  const dates =
+    getPeriodDates(summaryDays);
+  const records =
+    dates.map(function(key) {
+      return {
+        key: key,
+        data: getData(key)
+      };
+    });
+  const recordedDates =
+    records.filter(function(item) {
+      return hasData(item.data);
+    });
+  if (recordedDates.length === 0) {
+    container.innerHTML =
+      '<div class="empty-summary">' +
+      'この期間の記録はまだありません。' +
+      '</div>';
+    return;
+  }
+  /* =========================
+     数値集計
+  ========================= */
+  const poopTotal =
+    records.reduce(
+      (sum, item) =>
+        sum + item.data.poop,
+      0
+    );
+  const peeTotal =
+    records.reduce(
+      (sum, item) =>
+        sum + item.data.pee,
+      0
+    );
+  const vomitTotal =
+    records.reduce(
+      (sum, item) =>
+        sum + item.data.vomit,
+      0
+    );
+  const walkValues =
+    records
+      .filter(item =>
+        item.data.walk !== null
+      )
+      .map(item =>
+        item.data.walk
+      );
+  const foodValues =
+    records
+      .filter(item =>
+        item.data.breakfast !== null ||
+        item.data.dinner !== null
+      )
+      .map(function(item) {
+        let total = 0;
+        if (item.data.breakfast !== null) {
+          total += item.data.breakfast;
+        }
+        if (item.data.dinner !== null) {
+          total += item.data.dinner;
+        }
+        return total;
+      });
+  const itchValues =
+    records
+      .filter(item =>
+        item.data.itch !== null
+      )
+      .map(item =>
+        item.data.itch
+      );
+  const maxItch =
+    itchValues.length > 0
+      ? Math.max(...itchValues)
+      : null;
+  /* =========================
+     症状日数
+  ========================= */
+  const symptomCounts = {
+    ear: 0,
+    mouth: 0,
+    paw: 0,
+    body: 0,
+    red: 0,
+    other: 0
+  };
+  records.forEach(function(item) {
+    item.data.symptoms.forEach(function(key) {
+      if (
+        symptomCounts[key] !== undefined
+      ) {
+        symptomCounts[key]++;
+      }
+    });
+  });
+  /* =========================
+     メモ
+  ========================= */
+  const memoRecords =
+    records
+      .filter(item =>
+        item.data.symptomMemo
+      )
+      .reverse();
+  /* =========================
+     表示
+  ========================= */
+  let html = "";
+  html +=
+    '<div class="summary-header">' +
+    '<strong>📋 過去' +
+    summaryDays +
+    '日間</strong><br>' +
+    '記録がある日：' +
+    recordedDates.length +
+    '日 / ' +
+    summaryDays +
+    '日' +
+    '</div>';
+  html +=
+    '<div class="summary-grid">';
+  html +=
+    '<div class="summary-item">' +
+    '<div class="summary-item-label">💩 うんち平均</div>' +
+    '<div class="summary-item-value">' +
+    average(
+      records.map(item =>
+        item.data.poop
+      )
+    ).toFixed(1) +
+    '回/日</div>' +
+    '</div>';
+  html +=
+    '<div class="summary-item">' +
+    '<div class="summary-item-label">💧 おしっこ平均</div>' +
+    '<div class="summary-item-value">' +
+    average(
+      records.map(item =>
+        item.data.pee
+      )
+    ).toFixed(1) +
+    '回/日</div>' +
+    '</div>';
+  html +=
+    '<div class="summary-item">' +
+    '<div class="summary-item-label">🐾 散歩平均</div>' +
+    '<div class="summary-item-value">' +
+    (
+      walkValues.length > 0
+        ? average(walkValues).toFixed(0)
+        : "－"
+    ) +
+    '分</div>' +
+    '</div>';
+  html +=
+    '<div class="summary-item">' +
+    '<div class="summary-item-label">🍚 食事平均</div>' +
+    '<div class="summary-item-value">' +
+    (
+      foodValues.length > 0
+        ? average(foodValues).toFixed(0)
+        : "－"
+    ) +
+    'g</div>' +
+    '</div>';
+  html +=
+    '<div class="summary-item">' +
+    '<div class="summary-item-label">🤢 嘔吐</div>' +
+    '<div class="summary-item-value">' +
+    vomitTotal +
+    '回</div>' +
+    '</div>';
+  html +=
+    '<div class="summary-item">' +
+    '<div class="summary-item-label">🐾 かゆみ平均</div>' +
+    '<div class="summary-item-value">' +
+    (
+      itchValues.length > 0
+        ? average(itchValues).toFixed(1)
+        : "－"
+    ) +
+    '/5</div>' +
+    '</div>';
+  html +=
+    '</div>';
+  /* =========================
+     かゆみ詳細
+  ========================= */
+  html +=
+    '<div class="summary-section">' +
+    '<div class="summary-section-title">' +
+    '🐾 かゆみ詳細' +
+    '</div>';
+  html +=
+    '<div class="symptom-frequency">' +
+    '平均：' +
+    (
+      itchValues.length > 0
+        ? average(itchValues).toFixed(1)
+        : "－"
+    ) +
+    '/5<br>' +
+    '最大：' +
+    (
+      maxItch !== null
+        ? maxItch
+        : "－"
+    ) +
+    '/5<br>' +
+    '記録日数：' +
+    itchValues.length +
+    '日' +
+    '</div>' +
+    '</div>';
+  /* =========================
+     症状頻度
+  ========================= */
+  html +=
+    '<div class="summary-section">' +
+    '<div class="summary-section-title">' +
+    '🩺 症状があった日数' +
+    '</div>' +
+    '<div class="symptom-frequency">' +
+    '👂 耳：' +
+    symptomCounts.ear +
+    '日<br>' +
+    '👄 口周り：' +
+    symptomCounts.mouth +
+    '日<br>' +
+    '🐾 足なめ・足噛み：' +
+    symptomCounts.paw +
+    '日<br>' +
+    '🐶 体を掻く：' +
+    symptomCounts.body +
+    '日<br>' +
+    '🔴 赤み：' +
+    symptomCounts.red +
+    '日<br>' +
+    '🩹 その他：' +
+    symptomCounts.other +
+    '日' +
+    '</div>' +
+    '</div>';
+  /* =========================
+     メモ
+  ========================= */
+  html +=
+    '<div class="summary-section">' +
+    '<div class="summary-section-title">' +
+    '📝 症状メモ' +
+    '</div>';
+  if (memoRecords.length === 0) {
+    html +=
+      '<div class="memo-list">' +
+      'メモはありません' +
+      '</div>';
+  } else {
+    html +=
+      '<div class="memo-list">';
+    memoRecords
+      .slice(0, 10)
+      .forEach(function(item) {
+        html +=
+          '<div class="memo-item">' +
+          '<strong>' +
+          formatDate(item.key) +
+          '</strong><br>' +
+          item.data.symptomMemo +
+          '</div>';
+      });
+    html +=
+      '</div>';
+  }
+  html +=
+    '</div>';
+  container.innerHTML =
+    html;
+}
+/* =========================
+   サマリー期間ボタン
+========================= */
+document
+  .querySelectorAll(".period-button")
+  .forEach(function(button) {
+    button.addEventListener(
+      "click",
+      function() {
+        document
+          .querySelectorAll(".period-button")
+          .forEach(function(item) {
+            item.classList.remove(
+              "selected"
+            );
+          });
+        button.classList.add(
+          "selected"
+        );
+        summaryDays =
+          Number(
+            button.dataset.days
+          );
+        renderHospitalSummary();
+      });
+  });
+/* =========================
    グラフ用データ
 ========================= */
 function getLast7Days() {
@@ -1059,7 +1557,6 @@ function createLineChart(
   let svg =
     '<svg class="chart" viewBox="0 0 440 180" ' +
     'preserveAspectRatio="none">';
-  /* 横線 */
   for (let i = 0; i <= 4; i++) {
     const y =
       paddingTop +
@@ -1075,7 +1572,6 @@ function createLineChart(
       y +
       '" stroke="#eeeeee" />';
   }
-  /* 縦ラベル */
   svg +=
     '<text x="2" y="' +
     (paddingTop + 5) +
@@ -1089,7 +1585,6 @@ function createLineChart(
     '" font-size="11" fill="#888">0' +
     unit +
     '</text>';
-  /* 折れ線 */
   svg +=
     '<path d="' +
     line +
@@ -1097,7 +1592,6 @@ function createLineChart(
     'stroke-width="3" ' +
     'stroke-linecap="round" ' +
     'stroke-linejoin="round" />';
-  /* 点 */
   points.forEach(function(point) {
     svg +=
       '<circle cx="' +
@@ -1115,7 +1609,6 @@ function createLineChart(
       point.value +
       '</text>';
   });
-  /* 日付 */
   labels.forEach(function(label, index) {
     const x =
       paddingLeft +
@@ -1216,6 +1709,7 @@ render();
 renderSymptomForm();
 renderHistory();
 renderCharts();
+renderHospitalSummary();
 </script>
 </body>
 </html>
