@@ -324,6 +324,16 @@ const supabaseClient = window.supabase.createClient(
 </script>
 </head>
 <body>
+<div id="loginArea">
+<h2>🔐 薫子ログにログイン</h2>
+
+<input id="loginEmail" type="email" placeholder="メールアドレス">
+<input id="loginPassword" type="password" placeholder="パスワード">
+
+<button id="loginButton">ログイン</button>
+
+<p id="loginMessage"></p>
+</div>
 <main>
 <h1>🐶 薫子ログ</h1>
 <div id="today" class="date"></div>
@@ -1720,6 +1730,37 @@ renderSymptomForm();
 renderHistory();
 renderCharts();
 renderHospitalSummary();
+</script>
+<script>
+document
+  .getElementById("loginButton")
+  .addEventListener("click", async function () {
+    const email =
+      document.getElementById("loginEmail").value.trim();
+
+    const password =
+      document.getElementById("loginPassword").value;
+
+    const loginMessage =
+      document.getElementById("loginMessage");
+
+    loginMessage.textContent = "ログイン中…";
+
+    const { error } =
+      await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+    if (error) {
+      loginMessage.textContent =
+        "ログインできませんでした：" + error.message;
+      return;
+    }
+
+    loginMessage.textContent =
+      "ログイン成功！🐶";
+  });
 </script>
 </body>
 </html>
